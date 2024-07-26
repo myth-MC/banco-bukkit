@@ -15,24 +15,24 @@ public class SetSubcommand implements BiConsumer<CommandSender, String[]> {
     @Override
     public void accept(CommandSender sender, String[] args) {
         if (args.length < 2) {
-            MessageUtils.error(sender, "banco.errors.not-enough-arguments");
+            MessageUtils.error(Banco.get().adventure().sender(sender), "banco.errors.not-enough-arguments");
             return;
         }
 
         var target = Banco.get().getAccountManager().getAccount(PlayerUtils.getUuid(args[0]));
         if (target == null) {
-            MessageUtils.error(sender, translatable("banco.errors.player-not-found", text(args[0])));
+            MessageUtils.error(Banco.get().adventure().sender(sender), translatable("banco.errors.player-not-found", text(args[0])));
             return;
         }
 
         if (!isParsable(args[1])) {
-            MessageUtils.error(sender, translatable("banco.errors.invalid-value", text(args[1])));
+            MessageUtils.error(Banco.get().adventure().sender(sender), translatable("banco.errors.invalid-value", text(args[1])));
             return;
         }
 
         int amount = Integer.parseInt(args[1]);
         Banco.get().getAccountManager().set(target.getUuid(), amount);
-        MessageUtils.success(sender, translatable("banco.commands.banco.set.success",
+        MessageUtils.success(Banco.get().adventure().sender(sender), translatable("banco.commands.banco.set.success",
                         text(args[0]),
                         text(amount),
                         text(Banco.get().getConfig().getString("currency.symbol")))

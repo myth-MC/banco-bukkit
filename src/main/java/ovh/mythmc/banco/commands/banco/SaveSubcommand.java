@@ -11,13 +11,13 @@ public class SaveSubcommand implements BiConsumer<CommandSender, String[]> {
 
     @Override
     public void accept(CommandSender sender, String[] args) {
-        MessageUtils.info(sender, "banco.commands.banco.save");
+        MessageUtils.info(Banco.get().adventure().sender(sender), "banco.commands.banco.save");
         try {
             Banco.get().saveData();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        MessageUtils.success(sender, "banco.commands.banco.save.success");
+        MessageUtils.success(Banco.get().adventure().sender(sender), "banco.commands.banco.save.success");
     }
 
 }

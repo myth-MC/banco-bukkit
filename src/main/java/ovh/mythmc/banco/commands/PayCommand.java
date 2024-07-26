@@ -27,43 +27,43 @@ public class PayCommand implements CommandExecutor, TabCompleter {
         var source = Banco.get().getAccountManager().getAccount(((Player) sender).getUniqueId());
 
         if (args.length < 2) {
-            MessageUtils.error(sender, "banco.errors.not-enough-arguments");
+            MessageUtils.error(Banco.get().adventure().sender(sender), "banco.errors.not-enough-arguments");
             return true;
         }
 
         var target = Banco.get().getAccountManager().getAccount(PlayerUtils.getUuid(args[0]));
         if (target == null) {
-            MessageUtils.error(sender, translatable("banco.errors.player-not-found", text(args[0])));
+            MessageUtils.error(Banco.get().adventure().sender(sender), translatable("banco.errors.player-not-found", text(args[0])));
             return true;
         }
 
         if (target.equals(source)) {
-            MessageUtils.error(sender, "banco.commands.pay.cannot-send-money-to-yourself");
+            MessageUtils.error(Banco.get().adventure().sender(sender), "banco.commands.pay.cannot-send-money-to-yourself");
             return true;
         }
 
         if (!isParsable(args[1])) {
-            MessageUtils.error(sender, translatable("banco.errors.invalid-value", text(args[1])));
+            MessageUtils.error(Banco.get().adventure().sender(sender), translatable("banco.errors.invalid-value", text(args[1])));
             return true;
         }
 
         int amount = Integer.parseInt(args[1]);
         if (Banco.get().getAccountManager().getActualAmount(source.getUuid()) < amount) {
-            MessageUtils.error(sender, "banco.errors.not-enough-funds");
+            MessageUtils.error(Banco.get().adventure().sender(sender), "banco.errors.not-enough-funds");
             return true;
         }
 
         Banco.get().getAccountManager().remove(source.getUuid(), amount);
         Banco.get().getAccountManager().add(target.getUuid(), amount);
 
-        MessageUtils.success(sender, translatable("banco.commands.pay.success",
+        MessageUtils.success(Banco.get().adventure().sender(sender), translatable("banco.commands.pay.success",
                 text(amount),
                 text(Banco.get().getConfig().getString("currency.symbol")),
                 text(Bukkit.getOfflinePlayer(target.getUuid()).getName()))
         );
 
         if (Bukkit.getOfflinePlayer(target.getUuid()).isOnline()) {
-            MessageUtils.info(Bukkit.getOfflinePlayer(target.getUuid()).getPlayer(), translatable("banco.commands.pay.received",
+            MessageUtils.info(Banco.get().adventure().player(Bukkit.getOfflinePlayer(target.getUuid()).getPlayer()), translatable("banco.commands.pay.received",
                     text(Bukkit.getOfflinePlayer(source.getUuid()).getName()),
                     text(amount),
                     text(Banco.get().getConfig().getString("currency.symbol"))
