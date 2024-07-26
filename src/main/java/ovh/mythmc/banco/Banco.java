@@ -1,5 +1,6 @@
 package ovh.mythmc.banco;
 
+import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.command.PluginCommand;
@@ -7,6 +8,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import ovh.mythmc.banco.commands.BalanceCommand;
 import ovh.mythmc.banco.commands.BancoCommand;
 import ovh.mythmc.banco.commands.PayCommand;
@@ -26,6 +28,7 @@ import java.util.Scanner;
 public final class Banco extends JavaPlugin {
 
     private static Banco instance;
+    private BukkitAudiences adventure;
 
     private AccountManager accountManager;
     private BancoVaultImpl vaultImpl;
@@ -36,6 +39,7 @@ public final class Banco extends JavaPlugin {
     @Override
     public void onEnable() {
         instance = this;
+        this.adventure = BukkitAudiences.create(this);
         vaultImpl = new BancoVaultImpl();
         accountManager = new AccountManager();
 
@@ -68,6 +72,11 @@ public final class Banco extends JavaPlugin {
             saveData();
         } catch (IOException e) {
             throw new RuntimeException(e);
+        }
+
+        if(this.adventure != null) {
+            this.adventure.close();
+            this.adventure = null;
         }
     }
 
@@ -143,7 +152,7 @@ public final class Banco extends JavaPlugin {
                     getLogger().info("Checking for updates...");
 
                 String latest = scanner.next();
-                String current = getPluginMeta().getVersion();
+                String current = getDescription().getVersion();
 
                 if (!current.equals(latest)) {
                     getLogger().info("A new update has been found: " + latest);
@@ -198,5 +207,12 @@ public final class Banco extends JavaPlugin {
     public static Banco get() { return instance; }
 
     public AccountManager getAccountManager() { return accountManager; }
+
+    public @NonNull BukkitAudiences adventure() {
+        if(this.adventure == null) {
+            throw new IllegalStateException("Tried to access Adventure when the plugin was disabled!");
+        }
+        return this.adventure;
+    }
 
 }
