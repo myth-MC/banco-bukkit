@@ -14,5 +14,5 @@
 
 ## 📚 Information
 
->[!WARNING]
 > Please visit our [main repository](https://github.com/myth-MC/banco) to open any issues or pull requests. This repo provides compatibility with Bukkit and other forks that have not yet implemented the [Adventure API](https://docs.advntr.dev/index.html), such as Spigot. We suggest migrating to [PaperMC](https://papermc.io/) or [PurpurMC](https://purpurmc.org).
+
